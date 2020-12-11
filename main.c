@@ -4,21 +4,28 @@
 #include <stdlib.h>
 #include <time.h>
 
-int main(){
+int main(){   
     srand(time(NULL));
-    printf("this is the initial message\n");
+    printf("pid of parent: %d\n",getpid());
     int status;
     int f = fork();
+
     if(f){
-    int r = rand() % 2 + 2;
-    printf("pid: %d\n",f);
-    sleep(r);
-    return r;
+        f = fork();
     }
-    wait(&status);
-    printf("status: %d\n",status);
-    printf("child slept for %d seconds\n",WEXITSTATUS(status));
 
-    return 0;
+    if(f){
+        int c = wait(&status);
+        printf("%d slept for %d seconds\n",c,WEXITSTATUS(status));
+        printf("the parent is done\n");
+        return 0;
+    }
 
+    if(!f){    
+    printf("child pid: %d\n",getpid());
+    int r = rand() % 9 + 2;
+    sleep(r);
+    printf("child is finished\n");
+    return r;
+    }    
 }
